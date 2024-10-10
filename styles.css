@@ -1,0 +1,30 @@
+body {
+  width: 300px;
+  font-family: Arial, sans-serif;
+  padding: 10px;
+}
+
+h1 {
+  text-align: center;
+}
+
+input, select, button {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+#snippet-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+#snippet-list li {
+  cursor: pointer;
+  padding: 5px;
+  border-bottom: 1px solid #ccc;
+}
+
+#snippet-list li:hover {
+  background-color: #f0f0f0;
+}

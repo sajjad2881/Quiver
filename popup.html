@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TextQuiver</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <h1>TextQuiver</h1>
+        <div id="add-snippet">
+            <input type="text" id="snippet-content" placeholder="Enter snippet content">
+            <input type="text" id="snippet-tags" placeholder="Enter tags (comma-separated)">
+            <button id="add-btn">Add Snippet</button>
+        </div>
+        <div id="search-filter">
+            <input type="text" id="search-input" placeholder="Search snippets">
+            <select id="tag-filter">
+                <option value="">All Tags</option>
+            </select>
+        </div>
+        <ul id="snippet-list"></ul>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
