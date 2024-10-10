@@ -12,6 +12,7 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
+
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "addToTextQuiver") {
     const selectedText = info.selectionText;
