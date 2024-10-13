@@ -186,93 +186,95 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     snippetList.innerHTML = '';
-    filteredSnippets.forEach((snippet, index) => {
-      const li = document.createElement('li');
-      li.className = 'snippet-item';
+    chrome.storage.local.get(['shortcuts', 'snippets'], (result) => {
+      const shortcuts = result.shortcuts || [];
+      snippets = result.snippets || [];
 
-      const contentDiv = document.createElement('div');
-      contentDiv.className = 'snippet-content';
-      if (snippet.html) {
-        const iframe = document.createElement('iframe');
-        iframe.style.border = 'none';
-        iframe.style.width = '100%';
-        iframe.style.height = 'auto';
-        iframe.style.pointerEvents = 'none';
-        contentDiv.appendChild(iframe);
+      filteredSnippets.forEach((snippet, index) => {
+        const li = document.createElement('li');
+        li.className = 'snippet-item';
 
-        iframe.onload = () => {
-          const doc = iframe.contentDocument || iframe.contentWindow.document;
-          doc.open();
-          doc.write(highlightMatch(snippet.html, searchTerm));
-          doc.close();
-          iframe.style.height = doc.body.scrollHeight + 'px';
-        };
-      } else {
-        // For manually added snippets, use pre-wrap to preserve formatting
-        contentDiv.style.whiteSpace = 'pre-wrap';
-        contentDiv.innerHTML = highlightMatch(snippet.content, searchTerm);
-      }
-      li.appendChild(contentDiv);
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'snippet-content';
+        if (snippet.html) {
+          const iframe = document.createElement('iframe');
+          iframe.style.border = 'none';
+          iframe.style.width = '100%';
+          iframe.style.height = 'auto';
+          iframe.style.pointerEvents = 'none';
+          contentDiv.appendChild(iframe);
 
-      if (snippet.url) {
-        const urlDiv = document.createElement('div');
-        urlDiv.className = 'snippet-url';
-        urlDiv.textContent = `Source: ${snippet.url}`;
-        li.appendChild(urlDiv);
-      }
-
-      const tagDiv = document.createElement('div');
-      tagDiv.className = 'snippet-tags';
-      snippet.tags.forEach(tag => {
-        const tagSpan = document.createElement('span');
-        tagSpan.className = 'tag';
-        tagSpan.textContent = tag;
-        tagDiv.appendChild(tagSpan);
-      });
-
-      const editBtn = document.createElement('button');
-      editBtn.className = 'edit-btn';
-      editBtn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-          <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
-          <path d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
-        </svg>
-      `;
-      editBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent the click from triggering the snippet click event
-        openEditModal(index);
-      });
-
-      const createShortcutBtn = document.createElement('button');
-      createShortcutBtn.className = 'create-shortcut-btn';
-      createShortcutBtn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-          <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd" />
-        </svg>
-      `;
-      createShortcutBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        createShortcut(index);
-      });
-
-      const tagAndEditContainer = document.createElement('div');
-      tagAndEditContainer.className = 'tag-edit-container';
-      tagAndEditContainer.appendChild(tagDiv);
-      tagAndEditContainer.appendChild(editBtn);
-      tagAndEditContainer.appendChild(createShortcutBtn);
-      li.appendChild(tagAndEditContainer);
-
-      li.addEventListener('click', (e) => {
-        // Prevent default behavior for all elements except the edit button
-        if (!e.target.closest('.edit-btn')) {
-          e.preventDefault();
-          copyToClipboard(snippet.content, snippet.html);
+          iframe.onload = () => {
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+            doc.open();
+            doc.write(highlightMatch(snippet.html, searchTerm));
+            doc.close();
+            iframe.style.height = doc.body.scrollHeight + 'px';
+          };
+        } else {
+          // For manually added snippets, use pre-wrap to preserve formatting
+          contentDiv.style.whiteSpace = 'pre-wrap';
+          contentDiv.innerHTML = highlightMatch(snippet.content, searchTerm);
         }
-      });
+        li.appendChild(contentDiv);
 
-      // Add this new code to display shortcuts
-      chrome.storage.local.get('shortcuts', (result) => {
-        const shortcuts = result.shortcuts || [];
+        if (snippet.url) {
+          const urlDiv = document.createElement('div');
+          urlDiv.className = 'snippet-url';
+          urlDiv.textContent = `Source: ${snippet.url}`;
+          li.appendChild(urlDiv);
+        }
+
+        const tagDiv = document.createElement('div');
+        tagDiv.className = 'snippet-tags';
+        snippet.tags.forEach(tag => {
+          const tagSpan = document.createElement('span');
+          tagSpan.className = 'tag';
+          tagSpan.textContent = tag;
+          tagDiv.appendChild(tagSpan);
+        });
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit-btn';
+        editBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+            <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
+            <path d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
+          </svg>
+        `;
+        editBtn.addEventListener('click', (e) => {
+          e.stopPropagation(); // Prevent the click from triggering the snippet click event
+          openEditModal(index);
+        });
+
+        const createShortcutBtn = document.createElement('button');
+        createShortcutBtn.className = 'create-shortcut-btn';
+        createShortcutBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd" />
+          </svg>
+        `;
+        createShortcutBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          createShortcut(index);
+        });
+
+        const tagAndEditContainer = document.createElement('div');
+        tagAndEditContainer.className = 'tag-edit-container';
+        tagAndEditContainer.appendChild(tagDiv);
+        tagAndEditContainer.appendChild(editBtn);
+        tagAndEditContainer.appendChild(createShortcutBtn);
+        li.appendChild(tagAndEditContainer);
+
+        li.addEventListener('click', (e) => {
+          // Prevent default behavior for all elements except the edit button
+          if (!e.target.closest('.edit-btn')) {
+            e.preventDefault();
+            copyToClipboard(snippet.content, snippet.html);
+          }
+        });
+
+        // Update this part to show shortcuts
         const shortcutsForSnippet = shortcuts.filter(s => s.replacement === snippet.content);
         if (shortcutsForSnippet.length > 0) {
           const shortcutDiv = document.createElement('div');
@@ -280,9 +282,9 @@ document.addEventListener('DOMContentLoaded', () => {
           shortcutDiv.textContent = 'Shortcuts: ' + shortcutsForSnippet.map(s => s.trigger).join(', ');
           li.insertBefore(shortcutDiv, tagAndEditContainer);
         }
-      });
 
-      snippetList.appendChild(li);
+        snippetList.appendChild(li);
+      });
     });
   }
 
@@ -468,10 +470,30 @@ document.addEventListener('DOMContentLoaded', () => {
     if (shortcut && shortcut.startsWith('/')) {
       chrome.storage.local.get('shortcuts', (result) => {
         const shortcuts = result.shortcuts || [];
-        shortcuts.push({ trigger: shortcut, replacement: snippet.content });
-        chrome.storage.local.set({ shortcuts }, () => {
-          alert(`Shortcut ${shortcut} created successfully!`);
-        });
+        const existingShortcut = shortcuts.find(s => s.trigger === shortcut);
+
+        if (existingShortcut) {
+          const confirmReassign = confirm(`The shortcut "${shortcut}" is already in use. Do you want to reassign it to this snippet?`);
+          if (confirmReassign) {
+            // Remove the existing shortcut
+            const updatedShortcuts = shortcuts.filter(s => s.trigger !== shortcut);
+            // Add the new shortcut
+            updatedShortcuts.push({ trigger: shortcut, replacement: snippet.content });
+            chrome.storage.local.set({ shortcuts: updatedShortcuts }, () => {
+              alert(`Shortcut ${shortcut} reassigned successfully!`);
+              updateSnippetList(); // Refresh the list to show updated shortcuts
+            });
+          } else {
+            alert("Shortcut creation cancelled.");
+          }
+        } else {
+          // No conflict, add the new shortcut
+          shortcuts.push({ trigger: shortcut, replacement: snippet.content });
+          chrome.storage.local.set({ shortcuts }, () => {
+            alert(`Shortcut ${shortcut} created successfully!`);
+            updateSnippetList(); // Refresh the list to show the new shortcut
+          });
+        }
       });
     } else if (shortcut) {
       alert("Shortcut must start with '/'");
