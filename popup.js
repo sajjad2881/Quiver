@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         iframe.style.border = 'none';
         iframe.style.width = '100%';
         iframe.style.height = 'auto';
-        iframe.style.pointerEvents = 'none'; // Disable pointer events on iframe
+        iframe.style.pointerEvents = 'none';
         contentDiv.appendChild(iframe);
 
         iframe.onload = () => {
@@ -208,6 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
           iframe.style.height = doc.body.scrollHeight + 'px';
         };
       } else {
+        // For manually added snippets, use pre-wrap to preserve formatting
+        contentDiv.style.whiteSpace = 'pre-wrap';
         contentDiv.textContent = snippet.content;
       }
       li.appendChild(contentDiv);

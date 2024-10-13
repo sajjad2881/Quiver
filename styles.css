@@ -255,6 +255,7 @@ button:hover:not(.edit-btn) {
   margin-bottom: 8px;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  white-space: pre-wrap; /* Add this line */
 }
 
 .snippet-content a {
