@@ -459,3 +459,10 @@ mark {
   justify-content: space-between;
   align-items: center;
 }
+
+.snippet-shortcuts {
+  font-size: 12px;
+  color: #7f8c8d;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}

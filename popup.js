@@ -269,6 +269,19 @@ document.addEventListener('DOMContentLoaded', () => {
           copyToClipboard(snippet.content, snippet.html);
         }
       });
+
+      // Add this new code to display shortcuts
+      chrome.storage.local.get('shortcuts', (result) => {
+        const shortcuts = result.shortcuts || [];
+        const shortcutsForSnippet = shortcuts.filter(s => s.replacement === snippet.content);
+        if (shortcutsForSnippet.length > 0) {
+          const shortcutDiv = document.createElement('div');
+          shortcutDiv.className = 'snippet-shortcuts';
+          shortcutDiv.textContent = 'Shortcuts: ' + shortcutsForSnippet.map(s => s.trigger).join(', ');
+          li.insertBefore(shortcutDiv, tagAndEditContainer);
+        }
+      });
+
       snippetList.appendChild(li);
     });
   }
