@@ -34,6 +34,22 @@
             <button id="add-btn">Add Snippet</button>
         </div>
     </div>
+
+    <!-- Edit Snippet Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Edit Snippet</h2>
+            <textarea id="edit-snippet-content" placeholder="Edit snippet content"></textarea>
+            <div id="edit-tag-input-container">
+                <input type="text" id="edit-tag-input" placeholder="Edit tags">
+                <div id="edit-tag-suggestions"></div>
+            </div>
+            <input type="text" id="edit-url" placeholder="Edit source URL">
+            <button id="save-edit-btn">Save Changes</button>
+        </div>
+    </div>
+
     <script src="popup.js"></script>
 </body>
 </html>

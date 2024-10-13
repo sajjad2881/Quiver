@@ -10,9 +10,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const selectedFilterTags = document.getElementById('selected-filter-tags');
   const snippetList = document.getElementById('snippet-list');
 
+  const editModal = document.getElementById('edit-modal');
+  const editSnippetContent = document.getElementById('edit-snippet-content');
+  const editTagInput = document.getElementById('edit-tag-input');
+  const editTagSuggestions = document.getElementById('edit-tag-suggestions');
+  const editUrl = document.getElementById('edit-url');
+  const saveEditBtn = document.getElementById('save-edit-btn');
+  const closeBtn = document.querySelector('.close-btn');
+
   let snippets = [];
   let allTags = new Set();
   let selectedFilterTagsSet = new Set();
+  let currentEditIndex = null;
 
   // Load snippets from storage
   chrome.storage.local.get(['snippets'], (result) => {
@@ -167,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     snippetList.innerHTML = '';
-    filteredSnippets.forEach(snippet => {
+    filteredSnippets.forEach((snippet, index) => {
       const li = document.createElement('li');
       const contentDiv = document.createElement('div');
       contentDiv.className = 'snippet-content';
@@ -190,6 +199,12 @@ document.addEventListener('DOMContentLoaded', () => {
         tagDiv.appendChild(tagSpan);
       });
       li.appendChild(tagDiv);
+
+      const editBtn = document.createElement('button');
+      editBtn.textContent = 'Edit';
+      editBtn.className = 'edit-btn';
+      editBtn.addEventListener('click', () => openEditModal(index));
+      li.appendChild(editBtn);
 
       li.addEventListener('click', () => {
         copyToClipboard(snippet.content);
@@ -219,6 +234,45 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Failed to copy: ', err);
     });
   }
+
+  function openEditModal(index) {
+    currentEditIndex = index;
+    const snippet = snippets[index];
+    editSnippetContent.value = snippet.content;
+    editTagInput.value = snippet.tags.join(', ');
+    editUrl.value = snippet.url || '';
+    editModal.style.display = 'block';
+  }
+
+  closeBtn.addEventListener('click', () => {
+    editModal.style.display = 'none';
+  });
+
+  window.addEventListener('click', (event) => {
+    if (event.target === editModal) {
+      editModal.style.display = 'none';
+    }
+  });
+
+  saveEditBtn.addEventListener('click', () => {
+    if (currentEditIndex !== null) {
+      const updatedContent = editSnippetContent.value.trim();
+      const updatedTags = editTagInput.value.split(',').map(tag => tag.trim()).filter(tag => tag);
+      const updatedUrl = editUrl.value.trim();
+
+      snippets[currentEditIndex] = {
+        ...snippets[currentEditIndex],
+        content: updatedContent,
+        tags: updatedTags,
+        url: updatedUrl
+      };
+
+      chrome.storage.local.set({ snippets }, () => {
+        updateSnippetList();
+        editModal.style.display = 'none';
+      });
+    }
+  });
 
   // Add tab functionality
   const tabBtns = document.querySelectorAll('.tab-btn');
