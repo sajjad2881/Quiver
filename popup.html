@@ -9,18 +9,30 @@
 <body>
     <div id="app">
         <h1>Quiver</h1>
-        <div id="add-snippet">
-            <input type="text" id="snippet-content" placeholder="Enter snippet content">
-            <input type="text" id="snippet-tags" placeholder="Enter tags (comma-separated)">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="view">View Snippets</button>
+            <button class="tab-btn" data-tab="add">Add Snippet</button>
+        </div>
+        <div id="view-snippets" class="tab-content active">
+            <div id="search-filter">
+                <input type="text" id="search-input" placeholder="Search snippets">
+                <div id="tag-filter-container">
+                    <input type="text" id="tag-filter-input" placeholder="Search tags">
+                    <div id="tag-filter-dropdown"></div>
+                </div>
+                <div id="selected-filter-tags"></div>
+            </div>
+            <ul id="snippet-list"></ul>
+        </div>
+        <div id="add-snippets" class="tab-content">
+            <textarea id="snippet-content" placeholder="Enter snippet content"></textarea>
+            <div id="tag-input-container">
+                <input type="text" id="tag-input" placeholder="Add a tag">
+                <div id="tag-suggestions"></div>
+            </div>
+            <div id="selected-tags"></div>
             <button id="add-btn">Add Snippet</button>
         </div>
-        <div id="search-filter">
-            <input type="text" id="search-input" placeholder="Search snippets">
-            <select id="tag-filter">
-                <option value="">All Tags</option>
-            </select>
-        </div>
-        <ul id="snippet-list"></ul>
     </div>
     <script src="popup.js"></script>
 </body>
