@@ -174,6 +174,13 @@ document.addEventListener('DOMContentLoaded', () => {
       contentDiv.innerHTML = highlightMatch(snippet.content, searchTerm);
       li.appendChild(contentDiv);
 
+      if (snippet.url) {
+        const urlDiv = document.createElement('div');
+        urlDiv.className = 'snippet-url';
+        urlDiv.textContent = `Source: ${snippet.url}`;
+        li.appendChild(urlDiv);
+      }
+
       const tagDiv = document.createElement('div');
       tagDiv.className = 'snippet-tags';
       snippet.tags.forEach(tag => {
