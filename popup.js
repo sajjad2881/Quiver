@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Add this at the beginning of your DOMContentLoaded event listener
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "snippetAdded") {
+      loadSnippets();
+    }
+  });
+
   const snippetContent = document.getElementById('snippet-content');
   const tagInput = document.getElementById('tag-input');
   const tagSuggestions = document.getElementById('tag-suggestions');
@@ -183,7 +190,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const contentDiv = document.createElement('div');
       contentDiv.className = 'snippet-content';
-      contentDiv.innerHTML = highlightMatch(snippet.content.replace(/\n/g, '<br>'), searchTerm); // Preserve line breaks
+      if (snippet.isFormatted) {
+        contentDiv.innerHTML = snippet.content.split('\n\n').map(paragraph => 
+          `<p>${paragraph}</p>`
+        ).join('');
+      } else {
+        contentDiv.textContent = snippet.content;
+      }
       li.appendChild(contentDiv);
 
       if (snippet.url) {
@@ -243,9 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function copyToClipboard(text) {
-    // Replace <br> tags with newline characters for clipboard copying
-    const formattedText = text.replace(/<br>/g, '\n');
-    navigator.clipboard.writeText(formattedText).then(() => {
+    navigator.clipboard.writeText(text).then(() => {
       console.log('Snippet copied to clipboard');
     }).catch(err => {
       console.error('Failed to copy: ', err);
@@ -340,6 +351,17 @@ document.addEventListener('DOMContentLoaded', () => {
       URL.revokeObjectURL(url);
     });
   });
+
+  // Replace the existing loadSnippets function with this one
+  function loadSnippets() {
+    chrome.storage.local.get(['snippets'], (result) => {
+      snippets = result.snippets || [];
+      updateSnippetList();
+      updateAllTags();
+      console.log('Loaded snippets:', snippets);
+      console.log('All tags after loading:', allTags);
+    });
+  }
 
   loadSnippets();
 });

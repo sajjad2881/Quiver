@@ -253,6 +253,13 @@ button:hover:not(.edit-btn) {
 
 .snippet-content {
   margin-bottom: 8px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.snippet-content a {
+  color: #3498db;
+  text-decoration: underline;
 }
 
 .snippet-tags {
