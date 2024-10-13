@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Add tab functionality
+  // Modify the tab functionality
   const tabBtns = document.querySelectorAll('.tab-btn');
   const tabContents = document.querySelectorAll('.tab-content');
 
@@ -362,6 +362,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       btn.classList.add('active');
       document.getElementById(`${tabName}-snippets`).classList.add('active');
+
+      // Reload snippets when switching to the "View Snippets" tab
+      if (tabName === 'view') {
+        loadSnippets();
+      }
     });
   });
 
@@ -386,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Replace the existing loadSnippets function with this one
+  // Modify the loadSnippets function to update the snippet list
   function loadSnippets() {
     chrome.storage.local.get(['snippets'], (result) => {
       snippets = result.snippets || [];
