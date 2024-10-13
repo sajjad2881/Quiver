@@ -401,11 +401,33 @@ document.addEventListener('DOMContentLoaded', () => {
   const downloadDataBtn = document.getElementById('download-data-btn');
 
   downloadDataBtn.addEventListener('click', () => {
-    chrome.storage.local.get(['snippets'], (result) => {
+    chrome.storage.local.get(['snippets', 'shortcuts'], (result) => {
       const snippets = result.snippets || [];
-      const data = snippets.map(snippet => {
-        return `Content: ${snippet.content}\nTags: ${snippet.tags.join(', ')}\nURL: ${snippet.url || 'N/A'}\n\n`;
-      }).join('---\n');
+      const shortcuts = result.shortcuts || [];
+
+      let data = "Snippets:\n\n";
+      snippets.forEach((snippet, index) => {
+        data += `Snippet ${index + 1}:\n`;
+        data += `Content: ${snippet.content}\n`;
+        data += `Tags: ${snippet.tags.join(', ')}\n`;
+        data += `URL: ${snippet.url || 'N/A'}\n`;
+
+        // Add shortcuts for this snippet
+        const snippetShortcuts = shortcuts.filter(s => s.replacement === snippet.content);
+        if (snippetShortcuts.length > 0) {
+          data += `Shortcuts: ${snippetShortcuts.map(s => s.trigger).join(', ')}\n`;
+        }
+
+        data += '\n---\n\n';
+      });
+
+      // Add a separate section for all shortcuts
+      data += "All Shortcuts:\n\n";
+      shortcuts.forEach((shortcut, index) => {
+        data += `Shortcut ${index + 1}:\n`;
+        data += `Trigger: ${shortcut.trigger}\n`;
+        data += `Replacement: ${shortcut.replacement}\n\n`;
+      });
 
       const blob = new Blob([data], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
