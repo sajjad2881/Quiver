@@ -197,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         iframe.style.border = 'none';
         iframe.style.width = '100%';
         iframe.style.height = 'auto';
+        iframe.style.pointerEvents = 'none'; // Disable pointer events on iframe
         contentDiv.appendChild(iframe);
 
         iframe.onload = () => {
@@ -246,8 +247,12 @@ document.addEventListener('DOMContentLoaded', () => {
       tagAndEditContainer.appendChild(editBtn);
       li.appendChild(tagAndEditContainer);
 
-      li.addEventListener('click', () => {
-        copyToClipboard(snippet.content, snippet.html);
+      li.addEventListener('click', (e) => {
+        // Prevent default behavior for all elements except the edit button
+        if (!e.target.closest('.edit-btn')) {
+          e.preventDefault();
+          copyToClipboard(snippet.content, snippet.html);
+        }
       });
       snippetList.appendChild(li);
     });

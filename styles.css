@@ -348,9 +348,14 @@ mark {
 
 .snippet-item {
   position: relative;
+  cursor: pointer;
   padding: 12px 15px;
   border-bottom: 1px solid #ecf0f1;
   transition: background-color 0.2s ease;
+}
+
+.snippet-item:hover {
+  background-color: #f0f3f5;
 }
 
 .edit-btn {
@@ -418,4 +423,12 @@ mark {
     margin-bottom: 5px;
     opacity: 0.9;
     pointer-events: none;
+}
+
+.snippet-content {
+  pointer-events: none;
+}
+
+.snippet-content iframe {
+  pointer-events: none;
 }
