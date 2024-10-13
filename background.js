@@ -15,16 +15,25 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "addToQuiver") {
     if (tab && tab.id && tab.id !== chrome.tabs.TAB_ID_NONE) {
-      // Use the same approach for both PDF and non-PDF files
-      chrome.tabs.sendMessage(tab.id, { action: "getSelectedText" }, (response) => {
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ['content.js']
+      }, () => {
         if (chrome.runtime.lastError) {
-          console.error("Error sending message:", chrome.runtime.lastError);
+          console.error("Error injecting content script:", chrome.runtime.lastError);
           fallbackToSelectionText(info, tab);
-        } else if (response && response.text) {
-          addSnippet(response.text, tab.url);
-        } else {
-          fallbackToSelectionText(info, tab);
+          return;
         }
+        chrome.tabs.sendMessage(tab.id, { action: "getSelectedText" }, (response) => {
+          if (chrome.runtime.lastError) {
+            console.error("Error sending message:", chrome.runtime.lastError);
+            fallbackToSelectionText(info, tab);
+          } else if (response && response.text) {
+            addSnippet(response.text, response.html, tab.url);
+          } else {
+            fallbackToSelectionText(info, tab);
+          }
+        });
       });
     } else {
       fallbackToSelectionText(info, tab);
@@ -34,13 +43,13 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 function fallbackToSelectionText(info, tab) {
   if (info && info.selectionText) {
-    addSnippet(info.selectionText, tab ? tab.url : '');
+    addSnippet(info.selectionText, null, tab ? tab.url : '');
   } else {
     console.error("Unable to get selected text");
   }
 }
 
-function addSnippet(selectedText, pageUrl) {
+function addSnippet(selectedText, selectedHtml, pageUrl) {
   if (!selectedText) {
     console.error("Invalid snippet data: No selected text");
     return;
@@ -50,9 +59,10 @@ function addSnippet(selectedText, pageUrl) {
     const snippets = result.snippets || [];
     snippets.push({ 
       content: selectedText, 
+      html: selectedHtml,
       tags: [], 
       url: pageUrl || '',
-      isFormatted: false
+      isFormatted: !!selectedHtml
     });
     chrome.storage.local.set({ snippets }, () => {
       console.log('Snippet added to Quiver with URL:', pageUrl);

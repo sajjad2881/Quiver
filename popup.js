@@ -192,13 +192,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const contentDiv = document.createElement('div');
       contentDiv.className = 'snippet-content';
-      if (snippet.isFormatted) {
-        contentDiv.innerHTML = snippet.content.split('\n\n').map(paragraph => 
-          `<p>${paragraph.replace(/\n/g, '<br>')}</p>`
-        ).join('');
+      if (snippet.html) {
+        const iframe = document.createElement('iframe');
+        iframe.style.border = 'none';
+        iframe.style.width = '100%';
+        iframe.style.height = 'auto';
+        contentDiv.appendChild(iframe);
+
+        iframe.onload = () => {
+          const doc = iframe.contentDocument || iframe.contentWindow.document;
+          doc.open();
+          doc.write(snippet.html);
+          doc.close();
+          iframe.style.height = doc.body.scrollHeight + 'px';
+        };
       } else {
-        // For unformatted snippets, preserve line breaks but don't add paragraphs
-        contentDiv.innerHTML = snippet.content.replace(/\n/g, '<br>');
+        contentDiv.textContent = snippet.content;
       }
       li.appendChild(contentDiv);
 
@@ -238,10 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
       li.appendChild(tagAndEditContainer);
 
       li.addEventListener('click', () => {
-        copyToClipboard(snippet.content);
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-          chrome.tabs.sendMessage(tabs[0].id, { action: 'pasteSnippet', content: snippet.content });
-        });
+        copyToClipboard(snippet.content, snippet.html);
       });
       snippetList.appendChild(li);
     });
@@ -258,12 +264,34 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Updated all tags:', allTags);
   }
 
-  function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-      console.log('Snippet copied to clipboard');
-    }).catch(err => {
-      console.error('Failed to copy: ', err);
-    });
+  function copyToClipboard(text, html) {
+    if (navigator.clipboard && window.ClipboardItem) {
+      if (html) {
+        const clipboardItem = new ClipboardItem({
+          "text/plain": new Blob([text], { type: "text/plain" }),
+          "text/html": new Blob([html], { type: "text/html" })
+        });
+        navigator.clipboard.write([clipboardItem]).then(() => {
+          console.log('Snippet copied to clipboard with formatting');
+        }).catch(err => {
+          console.error('Failed to copy with formatting: ', err);
+          // Fallback to plain text
+          navigator.clipboard.writeText(text).then(() => {
+            console.log('Snippet copied to clipboard as plain text');
+          }).catch(err => {
+            console.error('Failed to copy: ', err);
+          });
+        });
+      } else {
+        navigator.clipboard.writeText(text).then(() => {
+          console.log('Snippet copied to clipboard');
+        }).catch(err => {
+          console.error('Failed to copy: ', err);
+        });
+      }
+    } else {
+      console.error('Clipboard API not supported');
+    }
   }
 
   function openEditModal(index) {

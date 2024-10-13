@@ -4,64 +4,41 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (activeElement.tagName === 'TEXTAREA' || activeElement.tagName === 'INPUT') {
       activeElement.value += request.content;
     } else if (activeElement.isContentEditable) {
-      document.execCommand('insertText', false, request.content);
+      document.execCommand('insertHTML', false, request.content);
     }
   } else if (request.action === 'getSelectedText') {
-    let selectedText;
-    
-    if (document.contentType === 'application/pdf') {
-      // For PDF files
-      selectedText = getPDFSelection();
-    } else {
-      // For regular web pages
-      const selection = window.getSelection();
-      selectedText = selection.toString();
-    }
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const container = document.createElement('div');
+      container.appendChild(range.cloneContents());
 
-    if (selectedText) {
-      sendResponse({ text: selectedText });
-      // Log the added snippet
+      // Capture inline styles
+      const elements = container.getElementsByTagName('*');
+      for (let i = 0; i < elements.length; i++) {
+        const computedStyle = window.getComputedStyle(elements[i]);
+        let inlineStyle = '';
+        for (let j = 0; j < computedStyle.length; j++) {
+          const prop = computedStyle[j];
+          inlineStyle += `${prop}:${computedStyle.getPropertyValue(prop)};`;
+        }
+        elements[i].setAttribute('style', inlineStyle);
+      }
+
+      const html = container.innerHTML;
+      const text = container.textContent;
+
+      sendResponse({ text, html });
       chrome.runtime.sendMessage({ 
         action: "logSnippetAdded", 
-        snippet: { content: selectedText, url: window.location.href }
+        snippet: { content: text, html: html, url: window.location.href }
       });
     } else {
-      sendResponse({ text: null });
+      sendResponse({ text: null, html: null });
     }
-    return true; // Indicates that the response will be sent asynchronously
   }
+  return true; // Indicates that the response will be sent asynchronously
 });
-
-function getPDFSelection() {
-  const canvas = document.querySelector('canvas');
-  if (!canvas) return null;
-
-  const textLayer = document.querySelector('.textLayer');
-  if (!textLayer) return null;
-
-  const selection = window.getSelection();
-  if (selection.rangeCount === 0) return null;
-
-  const range = selection.getRangeAt(0);
-  const selectedElements = getSelectedElements(textLayer, range);
-  
-  return selectedElements.map(el => el.textContent).join(' ');
-}
-
-function getSelectedElements(container, range) {
-  const selectedElements = [];
-  const treeWalker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
-  let currentNode = treeWalker.currentNode;
-
-  while (currentNode) {
-    if (range.intersectsNode(currentNode)) {
-      selectedElements.push(currentNode.parentElement);
-    }
-    currentNode = treeWalker.nextNode();
-  }
-
-  return selectedElements;
-}
 
 // Notify that the content script has loaded
 chrome.runtime.sendMessage({ action: "contentScriptLoaded" });
