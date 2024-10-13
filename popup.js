@@ -243,10 +243,23 @@ document.addEventListener('DOMContentLoaded', () => {
         openEditModal(index);
       });
 
+      const createShortcutBtn = document.createElement('button');
+      createShortcutBtn.className = 'create-shortcut-btn';
+      createShortcutBtn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+          <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd" />
+        </svg>
+      `;
+      createShortcutBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        createShortcut(index);
+      });
+
       const tagAndEditContainer = document.createElement('div');
       tagAndEditContainer.className = 'tag-edit-container';
       tagAndEditContainer.appendChild(tagDiv);
       tagAndEditContainer.appendChild(editBtn);
+      tagAndEditContainer.appendChild(createShortcutBtn);
       li.appendChild(tagAndEditContainer);
 
       li.addEventListener('click', (e) => {
@@ -411,5 +424,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Split into paragraphs, trim each paragraph, and remove empty ones
     const paragraphs = content.split(/\n{2,}/).map(p => p.trim()).filter(p => p);
     return paragraphs.join('\n\n');
+  }
+
+  // Add this function to create a shortcut
+  function createShortcut(snippetIndex) {
+    const snippet = snippets[snippetIndex];
+    const shortcut = prompt("Enter a shortcut for this snippet (e.g., /email):", "/");
+    if (shortcut && shortcut.startsWith('/')) {
+      chrome.storage.local.get('shortcuts', (result) => {
+        const shortcuts = result.shortcuts || [];
+        shortcuts.push({ trigger: shortcut, replacement: snippet.content });
+        chrome.storage.local.set({ shortcuts }, () => {
+          alert(`Shortcut ${shortcut} created successfully!`);
+        });
+      });
+    } else if (shortcut) {
+      alert("Shortcut must start with '/'");
+    }
   }
 });
