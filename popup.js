@@ -203,14 +203,14 @@ document.addEventListener('DOMContentLoaded', () => {
         iframe.onload = () => {
           const doc = iframe.contentDocument || iframe.contentWindow.document;
           doc.open();
-          doc.write(snippet.html);
+          doc.write(highlightMatch(snippet.html, searchTerm));
           doc.close();
           iframe.style.height = doc.body.scrollHeight + 'px';
         };
       } else {
         // For manually added snippets, use pre-wrap to preserve formatting
         contentDiv.style.whiteSpace = 'pre-wrap';
-        contentDiv.textContent = snippet.content;
+        contentDiv.innerHTML = highlightMatch(snippet.content, searchTerm);
       }
       li.appendChild(contentDiv);
 
