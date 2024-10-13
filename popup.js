@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const editUrl = document.getElementById('edit-url');
   const saveEditBtn = document.getElementById('save-edit-btn');
   const closeBtn = document.querySelector('.close-btn');
+  const deleteBtn = document.querySelector('.delete-btn');
 
   let snippets = [];
   let allTags = new Set();
@@ -285,6 +286,19 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSnippetList();
         editModal.style.display = 'none';
       });
+    }
+  });
+
+  deleteBtn.addEventListener('click', () => {
+    if (currentEditIndex !== null) {
+      const confirmDelete = confirm("Are you sure you want to delete this snippet?");
+      if (confirmDelete) {
+        snippets.splice(currentEditIndex, 1);
+        chrome.storage.local.set({ snippets }, () => {
+          updateSnippetList();
+          editModal.style.display = 'none';
+        });
+      }
     }
   });
 

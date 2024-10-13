@@ -302,19 +302,38 @@ mark {
   border-radius: 8px;
 }
 
-.close-btn {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
+.modal-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
 }
 
-.close-btn:hover,
-.close-btn:focus {
-  color: black;
-  text-decoration: none;
+.close-btn {
+  color: #aaa;
+  font-size: 24px;
   cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: black;
+}
+
+.delete-btn {
+  cursor: pointer;
+  color: #e74c3c;
+  font-size: 24px;
+  transition: color 0.3s ease;
+}
+
+.delete-btn:hover {
+  color: #c0392b;
+}
+
+.size-6 {
+  width: 24px;
+  height: 24px;
 }
 
 .snippet-item {
