@@ -37,7 +37,7 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:hover {
+button:hover:not(.edit-btn) {
   background-color: #2980b9;
 }
 
@@ -256,6 +256,7 @@ button:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+  flex-grow: 1;
 }
 
 .snippet-tags .tag {
@@ -314,4 +315,37 @@ mark {
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+
+.snippet-item {
+  position: relative;
+  padding: 12px 15px;
+  border-bottom: 1px solid #ecf0f1;
+  transition: background-color 0.2s ease;
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 10px; /* Keep the icon small */
+  color: #3498db; /* Make the icon color more visible */
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px; /* Fixed width */
+  height: 20px; /* Fixed height */
+  padding: 0;
+  border-radius: 50%; /* Make it circular */
+}
+
+.edit-btn:hover {
+  color: #e74c3c; /* Change hover color to red */
+}
+
+.tag-edit-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
