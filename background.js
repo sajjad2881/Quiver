@@ -14,7 +14,7 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "addToQuiver") {
-    const selectedText = info.selectionText;
+    const selectedText = info.selectionText.replace(/\n/g, '\n'); // Ensure newlines are preserved
     const pageUrl = tab.url; // Capture the URL of the current tab
 
     if (selectedText) {

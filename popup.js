@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const contentDiv = document.createElement('div');
       contentDiv.className = 'snippet-content';
-      contentDiv.innerHTML = highlightMatch(snippet.content, searchTerm);
+      contentDiv.innerHTML = highlightMatch(snippet.content.replace(/\n/g, '<br>'), searchTerm); // Preserve line breaks
       li.appendChild(contentDiv);
 
       if (snippet.url) {
@@ -243,7 +243,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
+    // Replace <br> tags with newline characters for clipboard copying
+    const formattedText = text.replace(/<br>/g, '\n');
+    navigator.clipboard.writeText(formattedText).then(() => {
       console.log('Snippet copied to clipboard');
     }).catch(err => {
       console.error('Failed to copy: ', err);
