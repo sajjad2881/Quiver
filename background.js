@@ -14,11 +14,18 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "addToQuiver") {
-    console.log("Add to Quiver clicked");
-    chrome.tabs.sendMessage(tab.id, { action: "getSelectedText" }, (response) => {
-      console.log("Response received:", response);
-      if (response && response.text) {
-        const selectedText = response.text;
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: getSelectedText,
+    }, (injectionResults) => {
+      if (chrome.runtime.lastError) {
+        console.error(chrome.runtime.lastError);
+        return;
+      }
+
+      const [{ result }] = injectionResults;
+      if (result) {
+        const selectedText = result;
         const pageUrl = tab.url;
 
         chrome.storage.local.get(['snippets'], (result) => {
@@ -35,14 +42,29 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             chrome.runtime.sendMessage({ action: "snippetAdded" });
           });
         });
-      } else {
-        console.log("No text received from content script");
       }
     });
   }
 });
 
-// Listen for messages from the content script
+function getSelectedText() {
+  const selection = window.getSelection();
+  if (selection.rangeCount > 0) {
+    const range = selection.getRangeAt(0);
+    const div = document.createElement('div');
+    div.appendChild(range.cloneContents());
+    
+    // Replace <br> tags with newline characters
+    const formattedText = div.innerHTML.replace(/<br\s*\/?>/gi, '\n');
+    
+    // Remove all other HTML tags
+    const plainText = formattedText.replace(/<[^>]+>/g, '');
+    
+    return plainText;
+  }
+  return null;
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "logSnippetAdded") {
     console.log("Snippet added:", request.snippet);
