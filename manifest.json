@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "TextQuiver",
+  "name": "Quiver",
   "version": "1.0",
   "description": "Store and manage text snippets for easy copy and paste.",
   "permissions": [
