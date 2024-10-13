@@ -266,29 +266,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function copyToClipboard(text, html) {
     if (navigator.clipboard && window.ClipboardItem) {
+      const items = {};
+      if (text) {
+        items["text/plain"] = new Blob([text], { type: "text/plain" });
+      }
       if (html) {
-        const clipboardItem = new ClipboardItem({
-          "text/plain": new Blob([text], { type: "text/plain" }),
-          "text/html": new Blob([html], { type: "text/html" })
-        });
-        navigator.clipboard.write([clipboardItem]).then(() => {
-          console.log('Snippet copied to clipboard with formatting');
-        }).catch(err => {
-          console.error('Failed to copy with formatting: ', err);
-          // Fallback to plain text
+        items["text/html"] = new Blob([html], { type: "text/html" });
+      }
+      const clipboardItem = new ClipboardItem(items);
+      navigator.clipboard.write([clipboardItem]).then(() => {
+        console.log('Snippet copied to clipboard with formatting');
+      }).catch(err => {
+        console.error('Failed to copy with formatting: ', err);
+        // Fallback to plain text
+        if (text) {
           navigator.clipboard.writeText(text).then(() => {
             console.log('Snippet copied to clipboard as plain text');
           }).catch(err => {
             console.error('Failed to copy: ', err);
           });
-        });
-      } else {
-        navigator.clipboard.writeText(text).then(() => {
-          console.log('Snippet copied to clipboard');
-        }).catch(err => {
-          console.error('Failed to copy: ', err);
-        });
-      }
+        }
+      });
     } else {
       console.error('Clipboard API not supported');
     }
