@@ -101,10 +101,11 @@ button:hover:not(.edit-btn) {
 .tab-btn {
   flex: 1;
   padding: 10px;
-  background-color: #ecf0f1;
+  background-color: #f1ecee;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  color: black; /* Added this line to change the text color to black */
 }
 
 .tab-btn:first-child {
@@ -369,4 +370,45 @@ mark {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+    position: relative;
+    margin-top: 10px; /* Add some margin to separate from the input */
+    margin-bottom: 10px; /* Add some margin to separate from the list */
+}
+
+.icon-btn .size-6 {
+    width: 20px; /* Adjust size to match the logo */
+    height: 20px; /* Adjust size to match the logo */
+    color: #3498db; /* Default color */
+}
+
+.icon-btn:hover .size-6 {
+    color: #2980b9; /* Hover color */
+}
+
+.icon-btn[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%; /* Position above the button */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: 12px;
+    margin-bottom: 5px;
+    opacity: 0.9;
+    pointer-events: none;
 }

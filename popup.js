@@ -318,5 +318,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  const downloadDataBtn = document.getElementById('download-data-btn');
+
+  downloadDataBtn.addEventListener('click', () => {
+    chrome.storage.local.get(['snippets'], (result) => {
+      const snippets = result.snippets || [];
+      const data = snippets.map(snippet => {
+        return `Content: ${snippet.content}\nTags: ${snippet.tags.join(', ')}\nURL: ${snippet.url || 'N/A'}\n\n`;
+      }).join('---\n');
+
+      const blob = new Blob([data], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'QuiverData.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  });
+
   loadSnippets();
 });
