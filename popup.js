@@ -46,7 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const tags = Array.from(selectedTags.children).map(tag => tag.textContent.slice(0, -1));
 
     if (content) {
-      snippets.push({ content, tags });
+      // Format the content similar to how it's done for snippets from websites
+      const formattedContent = formatSnippetContent(content);
+      snippets.push({ content: formattedContent, tags, isFormatted: true });
       chrome.storage.local.set({ snippets });
       snippetContent.value = '';
       selectedTags.innerHTML = '';
@@ -192,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
       contentDiv.className = 'snippet-content';
       if (snippet.isFormatted) {
         contentDiv.innerHTML = snippet.content.split('\n\n').map(paragraph => 
-          `<p>${paragraph}</p>`
+          `<p>${paragraph.replace(/\n/g, '<br>')}</p>`
         ).join('');
       } else {
         contentDiv.textContent = snippet.content;
@@ -364,4 +366,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   loadSnippets();
+
+  // Add this new function to format the snippet content
+  function formatSnippetContent(content) {
+    // Split the content into paragraphs
+    const paragraphs = content.split(/\n{2,}/);
+    
+    // Join the paragraphs with double line breaks
+    return paragraphs.join('\n\n');
+  }
 });
