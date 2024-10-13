@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         createShortcutBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          createShortcut(index);
+          openShortcutModal(index);
         });
 
         const tagAndEditContainer = document.createElement('div');
@@ -463,40 +463,97 @@ document.addEventListener('DOMContentLoaded', () => {
     return paragraphs.join('\n\n');
   }
 
-  // Add this function to create a shortcut
-  function createShortcut(snippetIndex) {
-    const snippet = snippets[snippetIndex];
-    const shortcut = prompt("Enter a shortcut for this snippet (e.g., /email):", "/");
-    if (shortcut && shortcut.startsWith('/')) {
-      chrome.storage.local.get('shortcuts', (result) => {
-        const shortcuts = result.shortcuts || [];
-        const existingShortcut = shortcuts.find(s => s.trigger === shortcut);
+  const shortcutModal = document.getElementById('shortcut-modal');
+  const closeShortcutBtn = document.getElementById('close-shortcut-btn');
+  const existingShortcuts = document.getElementById('existing-shortcuts');
+  const newShortcutInput = document.getElementById('new-shortcut-input');
+  const addShortcutBtn = document.getElementById('add-shortcut-btn');
 
-        if (existingShortcut) {
-          const confirmReassign = confirm(`The shortcut "${shortcut}" is already in use. Do you want to reassign it to this snippet?`);
-          if (confirmReassign) {
-            // Remove the existing shortcut
-            const updatedShortcuts = shortcuts.filter(s => s.trigger !== shortcut);
-            // Add the new shortcut
-            updatedShortcuts.push({ trigger: shortcut, replacement: snippet.content });
-            chrome.storage.local.set({ shortcuts: updatedShortcuts }, () => {
-              alert(`Shortcut ${shortcut} reassigned successfully!`);
-              updateSnippetList(); // Refresh the list to show updated shortcuts
-            });
-          } else {
-            alert("Shortcut creation cancelled.");
-          }
-        } else {
-          // No conflict, add the new shortcut
-          shortcuts.push({ trigger: shortcut, replacement: snippet.content });
-          chrome.storage.local.set({ shortcuts }, () => {
-            alert(`Shortcut ${shortcut} created successfully!`);
-            updateSnippetList(); // Refresh the list to show the new shortcut
-          });
-        }
+  let currentSnippetIndex = null;
+
+  function openShortcutModal(snippetIndex) {
+    currentSnippetIndex = snippetIndex;
+    const snippet = snippets[snippetIndex];
+    shortcutModal.style.display = 'block';
+    updateExistingShortcuts();
+  }
+
+  function updateExistingShortcuts() {
+    chrome.storage.local.get('shortcuts', (result) => {
+      const shortcuts = result.shortcuts || [];
+      const snippet = snippets[currentSnippetIndex];
+      const snippetShortcuts = shortcuts.filter(s => s.replacement === snippet.content);
+
+      existingShortcuts.innerHTML = '';
+      snippetShortcuts.forEach(shortcut => {
+        const shortcutDiv = document.createElement('div');
+        shortcutDiv.className = 'existing-shortcut';
+        shortcutDiv.textContent = shortcut.trigger;
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', () => deleteShortcut(shortcut.trigger));
+        
+        shortcutDiv.appendChild(deleteBtn);
+        existingShortcuts.appendChild(shortcutDiv);
       });
-    } else if (shortcut) {
+    });
+  }
+
+  function deleteShortcut(trigger) {
+    chrome.storage.local.get('shortcuts', (result) => {
+      let shortcuts = result.shortcuts || [];
+      shortcuts = shortcuts.filter(s => s.trigger !== trigger);
+      chrome.storage.local.set({ shortcuts }, () => {
+        updateExistingShortcuts();
+        updateSnippetList();
+      });
+    });
+  }
+
+  addShortcutBtn.addEventListener('click', () => {
+    const newShortcut = newShortcutInput.value.trim();
+    if (newShortcut && newShortcut.startsWith('/')) {
+      createShortcut(currentSnippetIndex, newShortcut);
+      newShortcutInput.value = '';
+    } else {
       alert("Shortcut must start with '/'");
     }
+  });
+
+  closeShortcutBtn.addEventListener('click', () => {
+    shortcutModal.style.display = 'none';
+  });
+
+  window.addEventListener('click', (event) => {
+    if (event.target === shortcutModal) {
+      shortcutModal.style.display = 'none';
+    }
+  });
+
+  function createShortcut(snippetIndex, shortcut) {
+    const snippet = snippets[snippetIndex];
+    chrome.storage.local.get('shortcuts', (result) => {
+      const shortcuts = result.shortcuts || [];
+      const existingShortcut = shortcuts.find(s => s.trigger === shortcut);
+
+      if (existingShortcut) {
+        const confirmReassign = confirm(`The shortcut "${shortcut}" is already in use. Do you want to reassign it to this snippet?`);
+        if (confirmReassign) {
+          const updatedShortcuts = shortcuts.filter(s => s.trigger !== shortcut);
+          updatedShortcuts.push({ trigger: shortcut, replacement: snippet.content });
+          chrome.storage.local.set({ shortcuts: updatedShortcuts }, () => {
+            updateExistingShortcuts();
+            updateSnippetList();
+          });
+        }
+      } else {
+        shortcuts.push({ trigger: shortcut, replacement: snippet.content });
+        chrome.storage.local.set({ shortcuts }, () => {
+          updateExistingShortcuts();
+          updateSnippetList();
+        });
+      }
+    });
   }
 });

@@ -60,6 +60,19 @@
             </div>
         </div>
 
+        <!-- Add this new modal structure just before the closing </body> tag -->
+        <div id="shortcut-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="close-btn" id="close-shortcut-btn">&times;</span>
+                </div>
+                <h2>Manage Shortcuts</h2>
+                <div id="existing-shortcuts"></div>
+                <input type="text" id="new-shortcut-input" placeholder="Enter new shortcut (e.g., /email)">
+                <button id="add-shortcut-btn">Add Shortcut</button>
+            </div>
+        </div>
+
         <script src="popup.js"></script>
     </div>
 </body>

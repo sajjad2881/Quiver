@@ -466,3 +466,39 @@ mark {
   margin-top: 4px;
   margin-bottom: 8px;
 }
+
+.existing-shortcut {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background-color: #f0f3f5;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.existing-shortcut button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.existing-shortcut button:hover {
+  background-color: #c0392b;
+}
+
+#new-shortcut-input {
+  margin-bottom: 12px;
+}
+
+#add-shortcut-btn {
+  background-color: #2ecc71;
+}
+
+#add-shortcut-btn:hover {
+  background-color: #27ae60;
+}
