@@ -14,55 +14,51 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "addToQuiver") {
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      function: getSelectedText,
-    }, (injectionResults) => {
-      if (chrome.runtime.lastError) {
-        console.error(chrome.runtime.lastError);
-        return;
-      }
-
-      const [{ result }] = injectionResults;
-      if (result) {
-        const selectedText = result;
-        const pageUrl = tab.url;
-
-        chrome.storage.local.get(['snippets'], (result) => {
-          const snippets = result.snippets || [];
-          snippets.push({ 
-            content: selectedText, 
-            tags: [], 
-            url: pageUrl,
-            isFormatted: true
-          });
-          chrome.storage.local.set({ snippets }, () => {
-            console.log('Snippet added to Quiver with URL:', pageUrl);
-            // Notify the popup that a new snippet has been added
-            chrome.runtime.sendMessage({ action: "snippetAdded" });
-          });
-        });
-      }
-    });
+    if (tab && tab.id && tab.id !== chrome.tabs.TAB_ID_NONE) {
+      // Use the same approach for both PDF and non-PDF files
+      chrome.tabs.sendMessage(tab.id, { action: "getSelectedText" }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("Error sending message:", chrome.runtime.lastError);
+          fallbackToSelectionText(info, tab);
+        } else if (response && response.text) {
+          addSnippet(response.text, tab.url);
+        } else {
+          fallbackToSelectionText(info, tab);
+        }
+      });
+    } else {
+      fallbackToSelectionText(info, tab);
+    }
   }
 });
 
-function getSelectedText() {
-  const selection = window.getSelection();
-  if (selection.rangeCount > 0) {
-    const range = selection.getRangeAt(0);
-    const div = document.createElement('div');
-    div.appendChild(range.cloneContents());
-    
-    // Replace <br> tags with newline characters
-    const formattedText = div.innerHTML.replace(/<br\s*\/?>/gi, '\n');
-    
-    // Remove all other HTML tags
-    const plainText = formattedText.replace(/<[^>]+>/g, '');
-    
-    return plainText;
+function fallbackToSelectionText(info, tab) {
+  if (info && info.selectionText) {
+    addSnippet(info.selectionText, tab ? tab.url : '');
+  } else {
+    console.error("Unable to get selected text");
   }
-  return null;
+}
+
+function addSnippet(selectedText, pageUrl) {
+  if (!selectedText) {
+    console.error("Invalid snippet data: No selected text");
+    return;
+  }
+
+  chrome.storage.local.get(['snippets'], (result) => {
+    const snippets = result.snippets || [];
+    snippets.push({ 
+      content: selectedText, 
+      tags: [], 
+      url: pageUrl || '',
+      isFormatted: false
+    });
+    chrome.storage.local.set({ snippets }, () => {
+      console.log('Snippet added to Quiver with URL:', pageUrl);
+      chrome.runtime.sendMessage({ action: "snippetAdded" });
+    });
+  });
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

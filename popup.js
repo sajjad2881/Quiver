@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tags = Array.from(selectedTags.children).map(tag => tag.textContent.slice(0, -1));
 
     if (content) {
-      // Format the content similar to how it's done for snippets from websites
+      // Format the content only for manually added snippets
       const formattedContent = formatSnippetContent(content);
       snippets.push({ content: formattedContent, tags, isFormatted: true });
       chrome.storage.local.set({ snippets });
@@ -197,7 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
           `<p>${paragraph.replace(/\n/g, '<br>')}</p>`
         ).join('');
       } else {
-        contentDiv.textContent = snippet.content;
+        // For unformatted snippets, preserve line breaks but don't add paragraphs
+        contentDiv.innerHTML = snippet.content.replace(/\n/g, '<br>');
       }
       li.appendChild(contentDiv);
 
@@ -369,10 +370,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Add this new function to format the snippet content
   function formatSnippetContent(content) {
-    // Split the content into paragraphs
-    const paragraphs = content.split(/\n{2,}/);
-    
-    // Join the paragraphs with double line breaks
+    // Split into paragraphs, trim each paragraph, and remove empty ones
+    const paragraphs = content.split(/\n{2,}/).map(p => p.trim()).filter(p => p);
     return paragraphs.join('\n\n');
   }
 });
