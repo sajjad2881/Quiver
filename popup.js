@@ -5,11 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const selectedTags = document.getElementById('selected-tags');
   const addBtn = document.getElementById('add-btn');
   const searchInput = document.getElementById('search-input');
-  const tagFilter = document.getElementById('tag-filter');
-  const snippetList = document.getElementById('snippet-list');
   const tagFilterInput = document.getElementById('tag-filter-input');
   const tagFilterDropdown = document.getElementById('tag-filter-dropdown');
   const selectedFilterTags = document.getElementById('selected-filter-tags');
+  const snippetList = document.getElementById('snippet-list');
 
   let snippets = [];
   let allTags = new Set();
@@ -19,8 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
   chrome.storage.local.get(['snippets'], (result) => {
     snippets = result.snippets || [];
     updateSnippetList();
-    updateTagFilter();
     updateAllTags();
+    console.log('Loaded snippets:', snippets);
+    console.log('All tags after loading:', allTags);
   });
 
   // Add new snippet
@@ -34,20 +34,25 @@ document.addEventListener('DOMContentLoaded', () => {
       snippetContent.value = '';
       selectedTags.innerHTML = '';
       updateSnippetList();
-      updateTagFilter();
       updateAllTags();
     }
   });
 
   // Tag input functionality
+  tagInput.addEventListener('focus', () => {
+    showTagSuggestions(Array.from(allTags));
+  });
+
   tagInput.addEventListener('input', () => {
     const input = tagInput.value.trim().toLowerCase();
-    if (input) {
-      const suggestions = Array.from(allTags).filter(tag => tag.toLowerCase().includes(input));
-      showTagSuggestions(suggestions);
-    } else {
+    const suggestions = Array.from(allTags).filter(tag => tag.toLowerCase().includes(input));
+    showTagSuggestions(suggestions);
+  });
+
+  tagInput.addEventListener('blur', () => {
+    setTimeout(() => {
       tagSuggestions.style.display = 'none';
-    }
+    }, 200);
   });
 
   tagInput.addEventListener('keydown', (e) => {
@@ -75,26 +80,34 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function addTag(tagText) {
-    const tag = document.createElement('span');
-    tag.className = 'tag';
-    tag.textContent = tagText;
-    const removeBtn = document.createElement('span');
-    removeBtn.className = 'remove-tag';
-    removeBtn.textContent = '×';
-    removeBtn.addEventListener('click', () => tag.remove());
-    tag.appendChild(removeBtn);
-    selectedTags.appendChild(tag);
+    if (!Array.from(selectedTags.children).some(tag => tag.textContent.slice(0, -1) === tagText)) {
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = tagText;
+      const removeBtn = document.createElement('span');
+      removeBtn.className = 'remove-tag';
+      removeBtn.textContent = '×';
+      removeBtn.addEventListener('click', () => tag.remove());
+      tag.appendChild(removeBtn);
+      selectedTags.appendChild(tag);
+    }
   }
 
   // Tag filter functionality
+  tagFilterInput.addEventListener('focus', () => {
+    showTagFilterSuggestions(Array.from(allTags).filter(tag => !selectedFilterTagsSet.has(tag)));
+  });
+
   tagFilterInput.addEventListener('input', () => {
     const input = tagFilterInput.value.trim().toLowerCase();
-    if (input) {
-      const suggestions = Array.from(allTags).filter(tag => tag.toLowerCase().includes(input) && !selectedFilterTagsSet.has(tag));
-      showTagFilterSuggestions(suggestions);
-    } else {
+    const suggestions = Array.from(allTags).filter(tag => tag.toLowerCase().includes(input) && !selectedFilterTagsSet.has(tag));
+    showTagFilterSuggestions(suggestions);
+  });
+
+  tagFilterInput.addEventListener('blur', () => {
+    setTimeout(() => {
       tagFilterDropdown.style.display = 'none';
-    }
+    }, 200);
   });
 
   tagFilterInput.addEventListener('keydown', (e) => {
@@ -158,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const li = document.createElement('li');
       const contentDiv = document.createElement('div');
       contentDiv.className = 'snippet-content';
-      contentDiv.textContent = snippet.content;
+      contentDiv.innerHTML = highlightMatch(snippet.content, searchTerm);
       li.appendChild(contentDiv);
 
       const tagDiv = document.createElement('div');
@@ -181,19 +194,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function updateTagFilter() {
-    const allTags = new Set(snippets.flatMap(snippet => snippet.tags));
-    tagFilter.innerHTML = '<option value="">All Tags</option>';
-    allTags.forEach(tag => {
-      const option = document.createElement('option');
-      option.value = tag;
-      option.textContent = tag;
-      tagFilter.appendChild(option);
-    });
+  function highlightMatch(text, searchTerm) {
+    if (!searchTerm) return text;
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
   }
 
   function updateAllTags() {
     allTags = new Set(snippets.flatMap(snippet => snippet.tags));
+    console.log('Updated all tags:', allTags);
   }
 
   function copyToClipboard(text) {
@@ -201,15 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('Snippet copied to clipboard');
     }).catch(err => {
       console.error('Failed to copy: ', err);
-    });
-  }
-
-  function loadSnippets() {
-    chrome.storage.local.get(['snippets'], (result) => {
-      snippets = result.snippets || [];
-      updateSnippetList();
-      updateTagFilter();
-      updateAllTags();
     });
   }
 

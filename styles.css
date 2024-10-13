@@ -265,3 +265,9 @@ button:hover {
   border-radius: 4px;
   font-size: 12px;
 }
+
+mark {
+  background-color: #ffeb3b;
+  color: inherit;
+  padding: 0;
+}
