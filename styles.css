@@ -202,20 +202,17 @@ button:hover:not(.edit-btn) {
 #tag-filter-container {
   position: relative;
   display: flex;
-  align-items: center;
+  flex-direction: column; /* Stack elements vertically */
+  align-items: flex-start; /* Align items to the start */
 }
 
 #tag-icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  margin-right: 8px;
+  margin-bottom: 8px; /* Add some space between the icon and the input */
 }
 
 #tag-filter-input {
-  flex-grow: 1;
-  margin-bottom: 0; /* Adjust as needed */
+  width: 100%; /* Ensure the input takes the full width */
+  margin-bottom: 0;
   padding: 10px;
   border: 1px solid #dce0e3;
   border-radius: 4px;
