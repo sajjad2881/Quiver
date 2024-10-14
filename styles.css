@@ -201,7 +201,26 @@ button:hover:not(.edit-btn) {
 
 #tag-filter-container {
   position: relative;
-  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+#tag-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 8px;
+}
+
+#tag-filter-input {
+  flex-grow: 1;
+  margin-bottom: 0; /* Adjust as needed */
+  padding: 10px;
+  border: 1px solid #dce0e3;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
 }
 
 #tag-filter-dropdown {

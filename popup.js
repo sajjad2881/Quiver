@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedFilterTagsSet = new Set();
   let currentEditIndex = null;
 
+  const tagIconBtn = document.getElementById('tag-icon-btn');
+
   // Load snippets from storage
   chrome.storage.local.get(['snippets'], (result) => {
     snippets = result.snippets || [];
@@ -636,4 +638,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Toggle the visibility of the tag filter input
+  tagIconBtn.addEventListener('click', () => {
+    if (tagFilterInput.style.display === 'none') {
+      tagFilterInput.style.display = 'block';
+      tagFilterInput.focus();
+    } else {
+      tagFilterInput.style.display = 'none';
+    }
+  });
+
+  // Hide the tag filter input when clicking outside
+  document.addEventListener('click', (event) => {
+    if (!tagFilterInput.contains(event.target) && !tagIconBtn.contains(event.target)) {
+      tagFilterInput.style.display = 'none';
+    }
+  });
 });
