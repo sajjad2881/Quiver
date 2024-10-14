@@ -250,6 +250,7 @@ button:hover:not(.edit-btn) {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 10px; /* Add some space above the tags */
   margin-bottom: 12px;
 }
 
@@ -518,4 +519,41 @@ mark {
 
 #add-shortcut-btn:hover {
   background-color: #27ae60;
+}
+
+#search-filter {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+#search-input {
+  flex: 4; /* 80% of the line */
+  margin-right: 10px; /* Space between the inputs */
+}
+
+#tag-filter-container {
+  flex: 1; /* 20% of the line */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+#tag-icon-btn {
+  margin-bottom: 0; /* Remove bottom margin to align with input */
+}
+
+#tag-filter-input {
+  width: 100%;
+  margin-bottom: 0;
+  padding: 10px;
+  border: 1px solid #dce0e3;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
 }
