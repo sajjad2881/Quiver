@@ -633,23 +633,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Toggle the visibility of the tag filter input
-  tagIconBtn.addEventListener('click', () => {
+  // Toggle the visibility of the tag filter input and icon
+  tagIconBtn.addEventListener('click', (event) => {
+    event.stopPropagation(); // Prevent the click from bubbling up
     if (tagFilterInput.style.display === 'none') {
       tagFilterInput.style.display = 'block';
       tagFilterDropdown.style.display = 'block'; // Show dropdown when input is shown
+      tagIconBtn.style.display = 'none'; // Hide the icon
       tagFilterInput.focus();
-    } else {
-      tagFilterInput.style.display = 'none';
-      tagFilterDropdown.style.display = 'none'; // Hide dropdown when input is hidden
     }
   });
 
-  // Hide the tag filter input when clicking outside
+  // Hide the tag filter input and show the icon when clicking outside
   document.addEventListener('click', (event) => {
-    if (!tagFilterInput.contains(event.target) && !tagIconBtn.contains(event.target) && !tagFilterDropdown.contains(event.target)) {
+    if (!tagFilterInput.contains(event.target) && !tagFilterDropdown.contains(event.target)) {
       tagFilterInput.style.display = 'none';
       tagFilterDropdown.style.display = 'none';
+      tagIconBtn.style.display = 'flex'; // Show the icon
     }
+  });
+
+  // Ensure the icon is shown when the input is hidden
+  tagFilterInput.addEventListener('blur', () => {
+    setTimeout(() => {
+      if (tagFilterInput.style.display === 'none') {
+        tagIconBtn.style.display = 'flex';
+      }
+    }, 200);
   });
 });

@@ -523,7 +523,7 @@ mark {
 
 #search-filter {
   display: flex;
-  align-items: center;
+  align-items: center; /* Center items vertically */
   background-color: white;
   padding: 15px;
   border-radius: 8px;
@@ -532,12 +532,13 @@ mark {
 }
 
 #search-input {
-  flex: 4; /* 80% of the line */
+  flex: 4; /* Revert to original width proportion */
   margin-right: 10px; /* Space between the inputs */
+  height: 40px; /* Set a consistent height */
 }
 
 #tag-filter-container {
-  flex: 1; /* 20% of the line */
+  flex: 1; /* Revert to original width proportion */
   position: relative;
   display: flex;
   flex-direction: column;
@@ -546,6 +547,10 @@ mark {
 
 #tag-icon-btn {
   margin-bottom: 0; /* Remove bottom margin to align with input */
+  height: 40px; /* Set a consistent height */
+  display: flex; /* Ensure the button content is centered */
+  align-items: center; /* Center the icon vertically */
+  justify-content: center; /* Center the icon horizontally */
 }
 
 #tag-filter-input {
@@ -556,4 +561,22 @@ mark {
   border-radius: 4px;
   font-size: 14px;
   box-sizing: border-box;
+  height: 40px; /* Set a consistent height */
+}
+
+#tag-filter-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border: 1px solid #dce0e3;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 10;
+  display: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
