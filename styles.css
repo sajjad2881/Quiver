@@ -586,3 +586,38 @@ mark {
   font-size: 14px;
   box-sizing: border-box;
 }
+
+/* Add styles for the new "Add Snippet" button */
+#open-add-snippet-modal {
+    margin-top: 10px; /* Add some margin to separate from the download button */
+    /* Ensure other styles are similar to the download button */
+    display: flex; /* Ensure it's displayed */
+    align-items: center;
+    justify-content: center;
+    /* Add any other necessary styles */
+}
+
+/* Style the new add snippet modal */
+#add-snippet-modal {
+    /* Similar styles to the edit modal */
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+#add-snippet-modal .modal-content {
+    /* Similar styles to the edit modal content */
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+}

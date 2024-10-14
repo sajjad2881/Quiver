@@ -661,4 +661,24 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, 200);
   });
+
+  const openAddSnippetModalBtn = document.getElementById('open-add-snippet-modal');
+  const addSnippetModal = document.getElementById('add-snippet-modal');
+  const closeAddSnippetBtn = document.getElementById('close-add-snippet-btn');
+
+  // Open the add snippet modal
+  openAddSnippetModalBtn.addEventListener('click', () => {
+    addSnippetModal.style.display = 'block';
+  });
+
+  // Close the add snippet modal
+  closeAddSnippetBtn.addEventListener('click', () => {
+    addSnippetModal.style.display = 'none';
+  });
+
+  window.addEventListener('click', (event) => {
+    if (event.target === addSnippetModal) {
+      addSnippetModal.style.display = 'none';
+    }
+  });
 });
