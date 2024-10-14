@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const snippetContent = document.getElementById('snippet-content');
+  const snippetUrl = document.getElementById('snippet-url');
+  const snippetShortcut = document.getElementById('snippet-shortcut');
   const tagInput = document.getElementById('tag-input');
   const tagSuggestions = document.getElementById('tag-suggestions');
   const selectedTags = document.getElementById('selected-tags');
@@ -40,20 +42,70 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('All tags after loading:', allTags);
   });
 
-  // Add new snippet
+  // Modify the add new snippet functionality
   addBtn.addEventListener('click', () => {
     const content = snippetContent.value.trim();
+    const url = snippetUrl.value.trim();
+    const shortcut = snippetShortcut.value.trim();
     const tags = Array.from(selectedTags.children).map(tag => tag.textContent.slice(0, -1));
 
     if (content) {
-      // Format the content only for manually added snippets
       const formattedContent = formatSnippetContent(content);
-      snippets.push({ content: formattedContent, tags, isFormatted: true });
-      chrome.storage.local.set({ snippets });
-      snippetContent.value = '';
-      selectedTags.innerHTML = '';
-      updateSnippetList();
-      updateAllTags();
+      const newSnippet = { 
+        content: formattedContent, 
+        tags, 
+        url, 
+        isFormatted: true 
+      };
+
+      chrome.storage.local.get(['snippets', 'shortcuts'], (result) => {
+        const snippets = result.snippets || [];
+        const shortcuts = result.shortcuts || [];
+
+        snippets.push(newSnippet);
+
+        if (shortcut && shortcut.startsWith('/')) {
+          // Check for existing shortcut
+          const existingShortcut = shortcuts.find(s => s.trigger === shortcut);
+          if (existingShortcut) {
+            const confirmReassign = confirm(`The shortcut "${shortcut}" is already in use. Do you want to reassign it to this snippet?`);
+            if (confirmReassign) {
+              // Remove the existing shortcut
+              const index = shortcuts.findIndex(s => s.trigger === shortcut);
+              shortcuts.splice(index, 1);
+            } else {
+              // If user doesn't want to reassign, don't add the new shortcut
+              chrome.storage.local.set({ snippets }, () => {
+                snippetContent.value = '';
+                snippetUrl.value = '';
+                snippetShortcut.value = '';
+                selectedTags.innerHTML = '';
+                updateSnippetList();
+                updateAllTags();
+                alert('Snippet added successfully without shortcut!');
+              });
+              return;
+            }
+          }
+          // Add the new shortcut
+          shortcuts.push({ trigger: shortcut, replacement: formattedContent });
+        }
+
+        chrome.storage.local.set({ snippets, shortcuts }, () => {
+          snippetContent.value = '';
+          snippetUrl.value = '';
+          snippetShortcut.value = '';
+          selectedTags.innerHTML = '';
+          updateSnippetList();
+          updateAllTags();
+          
+          if (shortcut) {
+            alert(`Snippet added with shortcut: ${shortcut}`);
+          } else {
+            alert('Snippet added successfully!');
+          }
+        });
+      });
     }
   });
 
