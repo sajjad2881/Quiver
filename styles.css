@@ -207,7 +207,16 @@ button:hover:not(.edit-btn) {
 }
 
 #tag-icon-btn {
-  margin-bottom: 8px; /* Add some space between the icon and the input */
+  height: 40px; /* Match the height of the search input */
+  width: 40px; /* Set a fixed width */
+  display: flex; /* Ensure the button content is centered */
+  align-items: center; /* Center the icon vertically */
+  justify-content: center; /* Center the icon horizontally */
+  padding: 0; /* Remove any padding */
+  margin: 0; /* Remove any margin */
+  background: none; /* Remove any background */
+  border: none; /* Remove any border */
+  cursor: pointer; /* Add pointer cursor for better UX */
 }
 
 #tag-filter-input {
@@ -523,7 +532,6 @@ mark {
 
 #search-filter {
   display: flex;
-  align-items: center; /* Center items vertically */
   background-color: white;
   padding: 15px;
   border-radius: 8px;
@@ -535,48 +543,46 @@ mark {
   flex: 4; /* Revert to original width proportion */
   margin-right: 10px; /* Space between the inputs */
   height: 40px; /* Set a consistent height */
+  padding: 0 10px; /* Add horizontal padding */
+  line-height: 40px; /* Match the height for vertical centering */
+  border: 1px solid #dce0e3;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
 }
 
 #tag-filter-container {
   flex: 1; /* Revert to original width proportion */
   position: relative;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center; /* Center items vertically within the container */
+  height: 40px; /* Match the height of the search input */
 }
 
 #tag-icon-btn {
-  margin-bottom: 0; /* Remove bottom margin to align with input */
-  height: 40px; /* Set a consistent height */
+  height: 40px; /* Match the height of the search input */
+  width: 40px; /* Set a fixed width */
   display: flex; /* Ensure the button content is centered */
   align-items: center; /* Center the icon vertically */
   justify-content: center; /* Center the icon horizontally */
+  padding: 0; /* Remove any padding */
+  margin: 0; /* Remove any margin */
+  background: none; /* Remove any background */
+  border: none; /* Remove any border */
+  cursor: pointer; /* Add pointer cursor for better UX */
+}
+
+#tag-icon-btn svg {
+  width: 20px; /* Adjust the icon size as needed */
+  height: 20px; /* Adjust the icon size as needed */
 }
 
 #tag-filter-input {
   width: 100%;
-  margin-bottom: 0;
-  padding: 10px;
+  height: 40px; /* Match the height of the search input */
+  padding: 0 10px; /* Add some horizontal padding */
   border: 1px solid #dce0e3;
   border-radius: 4px;
   font-size: 14px;
   box-sizing: border-box;
-  height: 40px; /* Set a consistent height */
-}
-
-#tag-filter-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background-color: white;
-  border: 1px solid #dce0e3;
-  border-top: none;
-  border-radius: 0 0 4px 4px;
-  max-height: 150px;
-  overflow-y: auto;
-  z-index: 10;
-  display: none;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
 }
