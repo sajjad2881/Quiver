@@ -177,18 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
     showTagFilterSuggestions(suggestions);
   });
 
-  tagFilterInput.addEventListener('blur', () => {
-    setTimeout(() => {
-      tagFilterDropdown.style.display = 'none';
-    }, 200);
-  });
-
   tagFilterInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && tagFilterInput.value.trim()) {
       e.preventDefault();
       addFilterTag(tagFilterInput.value.trim());
       tagFilterInput.value = '';
-      tagFilterDropdown.style.display = 'none';
+      // Keep the dropdown visible after adding a tag
     }
   });
 
@@ -200,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
       div.addEventListener('click', () => {
         addFilterTag(tag);
         tagFilterInput.value = '';
-        tagFilterDropdown.style.display = 'none';
+        // Keep the dropdown visible after selecting a tag
       });
       tagFilterDropdown.appendChild(div);
     });
@@ -643,16 +637,19 @@ document.addEventListener('DOMContentLoaded', () => {
   tagIconBtn.addEventListener('click', () => {
     if (tagFilterInput.style.display === 'none') {
       tagFilterInput.style.display = 'block';
+      tagFilterDropdown.style.display = 'block'; // Show dropdown when input is shown
       tagFilterInput.focus();
     } else {
       tagFilterInput.style.display = 'none';
+      tagFilterDropdown.style.display = 'none'; // Hide dropdown when input is hidden
     }
   });
 
   // Hide the tag filter input when clicking outside
   document.addEventListener('click', (event) => {
-    if (!tagFilterInput.contains(event.target) && !tagIconBtn.contains(event.target)) {
+    if (!tagFilterInput.contains(event.target) && !tagIconBtn.contains(event.target) && !tagFilterDropdown.contains(event.target)) {
       tagFilterInput.style.display = 'none';
+      tagFilterDropdown.style.display = 'none';
     }
   });
 });

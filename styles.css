@@ -224,8 +224,8 @@ button:hover:not(.edit-btn) {
 }
 
 #tag-filter-dropdown {
-  position: absolute; /* Ensure the dropdown is positioned correctly */
-  top: 100%; /* Position it directly below the input */
+  position: absolute;
+  top: 100%;
   left: 0;
   right: 0;
   background-color: white;
@@ -234,9 +234,10 @@ button:hover:not(.edit-btn) {
   border-radius: 0 0 4px 4px;
   max-height: 150px;
   overflow-y: auto;
-  z-index: 10; /* Set a high z-index to bring it to the front */
-  display: block; /* Ensure it's visible */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Add shadow for better visibility */
+  z-index: 10;
+  display: none; /* Change to none initially */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%; /* Ensure it matches the input width */
 }
 
 #tag-filter-dropdown div {
