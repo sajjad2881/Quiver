@@ -351,6 +351,32 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Updated all tags:', allTags);
   }
 
+  // Add this function at the top level of your popup.js file
+  function showCopiedMessage() {
+    const message = document.createElement('div');
+    message.textContent = 'Snippet copied to clipboard';
+    message.style.position = 'fixed';
+    message.style.bottom = '20px';
+    message.style.left = '50%';
+    message.style.transform = 'translateX(-50%)';
+    message.style.backgroundColor = '#4CAF50';
+    message.style.color = 'white';
+    message.style.padding = '10px 20px';
+    message.style.borderRadius = '5px';
+    message.style.zIndex = '1000';
+    message.style.transition = 'opacity 0.5s';
+
+    document.body.appendChild(message);
+
+    setTimeout(() => {
+      message.style.opacity = '0';
+      setTimeout(() => {
+        document.body.removeChild(message);
+      }, 500);
+    }, 2000);
+  }
+
+  // Then, modify the copyToClipboard function:
   function copyToClipboard(text, html) {
     if (navigator.clipboard && window.ClipboardItem) {
       const items = {};
@@ -363,12 +389,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const clipboardItem = new ClipboardItem(items);
       navigator.clipboard.write([clipboardItem]).then(() => {
         console.log('Snippet copied to clipboard with formatting');
+        showCopiedMessage(); // Add this line
       }).catch(err => {
         console.error('Failed to copy with formatting: ', err);
         // Fallback to plain text
         if (text) {
           navigator.clipboard.writeText(text).then(() => {
             console.log('Snippet copied to clipboard as plain text');
+            showCopiedMessage(); // Add this line
           }).catch(err => {
             console.error('Failed to copy: ', err);
           });
