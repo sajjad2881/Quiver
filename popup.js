@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (snippet.url) {
           const urlDiv = document.createElement('div');
           urlDiv.className = 'snippet-url';
-          urlDiv.textContent = `Source: ${snippet.url}`;
+          //urlDiv.textContent = `Source: ${snippet.url}`;
           li.appendChild(urlDiv);
         }
 
@@ -309,9 +309,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const tagAndEditContainer = document.createElement('div');
         tagAndEditContainer.className = 'tag-edit-container';
-        tagAndEditContainer.appendChild(tagDiv);
-        tagAndEditContainer.appendChild(editBtn);
-        tagAndEditContainer.appendChild(createShortcutBtn);
+
+        // Add URL display and link functionality
+        if (snippet.url) {
+          const urlText = snippet.url.replace(/^https?:\/\//, '').substring(0, 12) + (snippet.url.length > 12 ? '...' : '');
+          const urlLink = document.createElement('a');
+          urlLink.href = snippet.url;
+          urlLink.className = 'snippet-url-link';
+          urlLink.textContent = urlText;
+          urlLink.addEventListener('click', (e) => {
+            e.stopPropagation();
+            chrome.tabs.create({ url: snippet.url });
+          });
+
+          // Add copy link button
+          const copyLinkBtn = document.createElement('button');
+          copyLinkBtn.className = 'copy-link-btn';
+          copyLinkBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+              <path fill-rule="evenodd" d="M19.902 4.098a3.75 3.75 0 0 0-5.304 0l-4.5 4.5a3.75 3.75 0 0 0 1.035 6.037.75.75 0 0 1-.646 1.353 5.25 5.25 0 0 1-1.449-8.45l4.5-4.5a5.25 5.25 0 1 1 7.424 7.424l-1.757 1.757a.75.75 0 1 1-1.06-1.06l1.757-1.757a3.75 3.75 0 0 0 0-5.304Zm-7.389 4.267a.75.75 0 0 1 1-.353 5.25 5.25 0 0 1 1.449 8.45l-4.5 4.5a5.25 5.25 0 1 1-7.424-7.424l1.757-1.757a.75.75 0 1 1 1.06 1.06l-1.757 1.757a3.75 3.75 0 1 0 5.304 5.304l4.5-4.5a3.75 3.75 0 0 0-1.035-6.037.75.75 0 0 1-.354-1Z" clip-rule="evenodd" />
+            </svg>
+          `;
+          copyLinkBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigator.clipboard.writeText(snippet.url).then(() => {
+              showCopiedLinkMessage();
+            });
+          });
+
+          tagAndEditContainer.appendChild(tagDiv);
+          tagAndEditContainer.appendChild(urlLink);
+          tagAndEditContainer.appendChild(copyLinkBtn);
+          tagAndEditContainer.appendChild(editBtn);
+          tagAndEditContainer.appendChild(createShortcutBtn);
+        } else {
+          tagAndEditContainer.appendChild(tagDiv);
+          tagAndEditContainer.appendChild(editBtn);
+          tagAndEditContainer.appendChild(createShortcutBtn);
+        }
+
         li.appendChild(tagAndEditContainer);
 
         li.addEventListener('click', (e) => {
@@ -681,4 +717,29 @@ document.addEventListener('DOMContentLoaded', () => {
       addSnippetModal.style.display = 'none';
     }
   });
+
+  // Add this new function to show the "Link Copied" message
+  function showCopiedLinkMessage() {
+    const message = document.createElement('div');
+    message.textContent = 'Link copied to clipboard';
+    message.style.position = 'fixed';
+    message.style.bottom = '20px';
+    message.style.right = '20px';
+    message.style.transform = 'none';
+    message.style.backgroundColor = '#4CAF50';
+    message.style.color = 'white';
+    message.style.padding = '10px 20px';
+    message.style.borderRadius = '5px';
+    message.style.zIndex = '1000';
+    message.style.transition = 'opacity 0.5s';
+
+    document.body.appendChild(message);
+
+    setTimeout(() => {
+      message.style.opacity = '0';
+      setTimeout(() => {
+        document.body.removeChild(message);
+      }, 500);
+    }, 2000);
+  }
 });
