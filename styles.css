@@ -516,17 +516,24 @@ mark {
 }
 
 .existing-shortcut button {
-  background-color: #e74c3c;
-  color: white;
+  background-color: transparent;
+  color: #e74c3c;
   border: none;
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: color 0.3s ease;
+  width: auto;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
 }
 
 .existing-shortcut button:hover {
-  background-color: #c0392b;
+  color: #c0392b;
 }
 
 #new-shortcut-input {
