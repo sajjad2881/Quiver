@@ -187,7 +187,8 @@ button:hover:not(.edit-btn) {
   cursor: pointer;
 }
 
-#snippet-content {
+#snippet-content, 
+.modal-content textarea {
   width: 100%;
   height: 100px;
   resize: vertical;
@@ -197,6 +198,14 @@ button:hover:not(.edit-btn) {
   border-radius: 4px;
   font-size: 14px;
   box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#snippet-content:focus,
+.modal-content textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
 #tag-filter-container {
