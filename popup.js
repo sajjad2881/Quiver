@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const editTagSuggestions = document.getElementById('edit-tag-suggestions');
   const editUrl = document.getElementById('edit-url');
   const saveEditBtn = document.getElementById('save-edit-btn');
-  const closeBtn = document.querySelector('.close-btn');
+  const closeEditBtn = document.querySelector('#edit-modal .close-btn');
   const deleteBtn = document.querySelector('.delete-btn');
 
   let snippets = [];
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 snippetUrl.value = '';
                 snippetShortcut.value = '';
                 selectedTags.innerHTML = '';
-                updateSnippetList();
+                loadSnippets();
                 updateAllTags();
                 alert('Snippet added successfully without shortcut!');
               });
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
           snippetUrl.value = '';
           snippetShortcut.value = '';
           selectedTags.innerHTML = '';
-          updateSnippetList();
+          loadSnippets();
           updateAllTags();
           
           if (shortcut) {
@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
     editModal.style.display = 'block';
   }
 
-  closeBtn.addEventListener('click', () => {
+  closeEditBtn.addEventListener('click', () => {
     editModal.style.display = 'none';
   });
 
