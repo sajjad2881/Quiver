@@ -1,7 +1,7 @@
 body {
   width: 350px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 20px;
+  padding: 5px 20px;
   background-color: #f5f7fa;
   margin: 0;
 }
@@ -37,8 +37,8 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:hover:not(.edit-btn) {
-  color: #262626;
+button:hover {
+  color: #E39774; /* #FAF3DD , F7D4BC*/
 }
 
 #add-snippet, #search-filter {
