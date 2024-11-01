@@ -8,20 +8,22 @@
 </head>
 <body>
     <div id="app">
-        <h1>Quiver</h1>
-        <div style="display: flex; gap: 8px;">
-            <button id="open-add-snippet-modal" class="icon-btn" title="Add Snippet">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
-                </svg>
-            </button>
-            <button id="download-data-btn" class="icon-btn" title="Download Data">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m-6 3.75 3 3m0 0 3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
-                </svg>
-            </button>
-        </div>
-        <div id="view-snippets" class="tab-content active">
+        <div class="header-container">
+            <div class="logo-container">
+                <img src="images/header.png" alt="Quiver">
+            </div>
+            <div class="header-buttons">
+                <button id="open-add-snippet-modal" class="icon-btn" title="Add Snippet">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                        <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <button id="download-data-btn" class="icon-btn" title="Download Data">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m-6 3.75 3 3m0 0 3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
+                    </svg>
+                </button>
+            </div>
             <div id="search-filter">
                 <input type="text" id="search-input" placeholder="Search snippets">
                 <div id="tag-filter-container">
@@ -34,7 +36,8 @@
                     <div id="tag-filter-dropdown"></div>
                 </div>
             </div>
-            <!-- Move the selected tags div outside of the search filter -->
+        </div>
+        <div id="view-snippets" class="tab-content active">
             <div id="selected-filter-tags"></div>
             <ul id="snippet-list"></ul>
         </div>
@@ -71,7 +74,7 @@
                 <h2>Edit Snippet</h2>
                 <textarea id="edit-snippet-content" placeholder="Edit snippet content"></textarea>
                 <div id="edit-tag-input-container">
-                    <input type="text" id="edit-tag-input" placeholder="Edit tags">
+                    <input type="text" id="edit-tag-input" placeholder="Edit tags (comma separated)">
                     <div id="edit-tag-suggestions"></div>
                 </div>
                 <input type="text" id="edit-url" placeholder="Edit source URL">
