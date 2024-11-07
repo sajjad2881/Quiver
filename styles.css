@@ -678,7 +678,7 @@ mark {
   display: grid;
   grid-template-columns: auto auto;
   grid-template-rows: auto auto;
-  gap: 10px;
+  gap: 2px;
   margin-bottom: 20px;
 }
 
@@ -703,7 +703,6 @@ mark {
   gap: 4px; /* Reduced from 8px to bring icons closer */
   justify-content: flex-end;
   align-items: flex-start;
-  padding-top: 10px; /* Add some padding from top */
 }
 
 .header-buttons:first-child {
@@ -746,7 +745,7 @@ mark {
   gap: 4px; /* Reduced from 8px to bring icons closer */
   justify-content: flex-end;
   align-items: flex-start;
-  padding-top: 10px; /* Add some padding from top */
+  padding-top: 2px; /* Add some padding from top */
 }
 
 /* Update the search filter container */
@@ -796,4 +795,26 @@ mark {
 .icon-btn .size-6 {
   width: 20px; /* Make icons slightly smaller */
   height: 20px;
+}
+
+/* Add styles for the header text */
+.header-text {
+  font-size: 32px;
+  color: rgb(190, 76, 40); /* Changed from #2c3e50 to rgb(190, 76, 40) */
+  margin: 0;
+  padding-top: 12px; /* Match the padding-top of the buttons */
+  margin-right: auto; /* Push the buttons to the right */
+  font-family: 'Itim', cursive; /* Add this line to use Itim font */
+}
+
+/* Update the button container to include the header */
+.header-buttons {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding-top: 2px;
+  width: 100%; /* Ensure container takes full width */
 }
