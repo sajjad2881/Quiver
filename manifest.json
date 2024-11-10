@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Quiver",
+  "name": "Quiver - Snippet Management and Text Expansion",
   "version": "1.0",
-  "description": "A Chrome extension for saving and managing code snippets.",
+  "description": "Save snippets from anywhere and create shortcuts e.g. /email to expand. Perfect for templates, prompts, and frequently used text",
   "permissions": [
     "storage",
     "activeTab",
