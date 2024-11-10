@@ -35,15 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const tagIconBtn = document.getElementById('tag-icon-btn');
 
-  // Load snippets from storage
-  chrome.storage.local.get(['snippets'], (result) => {
-    snippets = result.snippets || [];
-    updateSnippetList();
-    updateAllTags();
-    console.log('Loaded snippets:', snippets);
-    console.log('All tags after loading:', allTags);
-  });
-
   // Modify the add new snippet functionality
   addBtn.addEventListener('click', () => {
     const content = snippetContent.value.trim();
